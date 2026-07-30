@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: fittrack-api
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/fittrack
+    username: fittrack
+    password: fittrack
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
