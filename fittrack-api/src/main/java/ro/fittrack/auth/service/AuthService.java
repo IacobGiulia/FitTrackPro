@@ -55,4 +55,17 @@ public class AuthService{
 
         return new LoginResponse(token);
     }
+
+    public RegisterResponse getCurrentUser(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return new RegisterResponse(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail()
+        );
+    }
 }
