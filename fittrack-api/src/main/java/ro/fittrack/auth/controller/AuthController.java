@@ -1,0 +1,23 @@
+package ro.fittrack.auth.controller;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import ro.fittrack.auth.dto.RegisterResponse;
+import ro.fittrack.auth.dto.RegisterRequest;
+import ro.fittrack.auth.service.AuthService;
+
+@RestController
+@RequestMapping("api/auth")
+@RequiredArgsConstructor
+
+public class AuthController{
+    private final AuthService authService;
+
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public RegisterResponse register(@RequestBody @Valid RegisterRequest request) {
+        return authService.register(request);
+    }
+}
