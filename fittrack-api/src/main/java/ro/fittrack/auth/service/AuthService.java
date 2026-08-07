@@ -7,6 +7,9 @@ import ro.fittrack.auth.dto.RegisterResponse;
 import ro.fittrack.auth.dto.RegisterRequest;
 import ro.fittrack.auth.entity.User;
 import ro.fittrack.auth.repository.UserRepository;
+import ro.fittrack.auth.dto.LoginRequest;
+import ro.fittrack.auth.dto.LoginResponse;
+import ro.fittrack.auth.security.JwtService;
 
 @Service
 @RequiredArgsConstructor
@@ -15,6 +18,7 @@ public class AuthService{
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public RegisterResponse register(RegisterRequest request) {
 
@@ -36,5 +40,19 @@ public class AuthService{
                 savedUser.getLastName(),
                 savedUser.getEmail()
         );
+    }
+
+    public LoginResponse login(LoginRequest request) {
+
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new IllegalArgumentException("Invalid email or password");
+        }
+
+        String token = jwtService.generateToken(user.getEmail());
+
+        return new LoginResponse(token);
     }
 }
