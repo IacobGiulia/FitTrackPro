@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ro.fittrack.workoutExercise.dto.WorkoutExerciseResponse;
 import ro.fittrack.workoutExercise.service.WorkoutExerciseService;
 import ro.fittrack.workoutExercise.dto.CreateWorkoutExerciseRequest;
+import ro.fittrack.workoutExercise.dto.UpdateWorkoutExerciseRequest;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +41,7 @@ public class WorkoutExerciseController {
     public WorkoutExerciseResponse updateExercise(
             @PathVariable UUID workoutId,
             @PathVariable UUID exerciseId,
-            @RequestBody @Valid CreateWorkoutExerciseRequest request
+            @RequestBody @Valid UpdateWorkoutExerciseRequest request
     ) {
         return workoutExerciseService.updateExercise(
                 workoutId,

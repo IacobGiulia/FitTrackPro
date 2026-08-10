@@ -1,10 +1,14 @@
 package ro.fittrack.workoutExercise.service;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ro.fittrack.workout.entity.Workout;
+import ro.fittrack.exercise.entity.Exercise;
+import ro.fittrack.exercise.repository.ExerciseRepository;
 import ro.fittrack.workout.repository.WorkoutRepository;
 import ro.fittrack.workoutExercise.dto.CreateWorkoutExerciseRequest;
+import ro.fittrack.workoutExercise.dto.UpdateWorkoutExerciseRequest;
 import ro.fittrack.workoutExercise.dto.WorkoutExerciseResponse;
 import ro.fittrack.workoutExercise.entity.WorkoutExercise;
 import ro.fittrack.workoutExercise.repository.WorkoutExerciseRepository;
@@ -18,20 +22,23 @@ import java.util.UUID;
 public class WorkoutExerciseService {
     private final WorkoutExerciseRepository workoutExerciseRepository;
     private final WorkoutRepository workoutRepository;
+    private final ExerciseRepository exerciseRepository;
 
     public WorkoutExerciseResponse createExercise(UUID workoutId, CreateWorkoutExerciseRequest request)
     {
         Workout workout = workoutRepository.findById(workoutId).orElseThrow(() -> new IllegalArgumentException("Workout not found"));
-
-        WorkoutExercise exercise = WorkoutExercise.builder()
+        Exercise exercise = exerciseRepository.findById(request.exerciseId())
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Exercise not found"));
+        WorkoutExercise workoutExercise = WorkoutExercise.builder()
                 .workout(workout)
-                .exerciseName(request.exerciseName())
+                .exercise(exercise)
                 .sets(request.sets())
                 .reps(request.reps())
                 .weight(request.weight())
                 .build();
 
-        WorkoutExercise savedExercise = workoutExerciseRepository.save(exercise);
+        WorkoutExercise savedExercise = workoutExerciseRepository.save(workoutExercise);
 
         return toResponse(savedExercise);
     }
@@ -58,18 +65,20 @@ public class WorkoutExerciseService {
     public WorkoutExerciseResponse updateExercise(
             UUID workoutId,
             UUID exerciseId,
-            CreateWorkoutExerciseRequest request
+            UpdateWorkoutExerciseRequest request
     ) {
-        WorkoutExercise exercise = workoutExerciseRepository
-                .findByIdAndWorkoutId(exerciseId, workoutId)
-                .orElseThrow(() -> new IllegalArgumentException("Exercise not found"));
+        WorkoutExercise workoutExercise =
+                workoutExerciseRepository
+                        .findByIdAndWorkoutId(exerciseId, workoutId)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException("Exercise not found"));
 
-        exercise.setExerciseName(request.exerciseName());
-        exercise.setSets(request.sets());
-        exercise.setReps(request.reps());
-        exercise.setWeight(request.weight());
+        workoutExercise.setSets(request.sets());
+        workoutExercise.setReps(request.reps());
+        workoutExercise.setWeight(request.weight());
 
-        WorkoutExercise updated = workoutExerciseRepository.save(exercise);
+        WorkoutExercise updated =
+                workoutExerciseRepository.save(workoutExercise);
 
         return toResponse(updated);
     }
@@ -85,14 +94,15 @@ public class WorkoutExerciseService {
         workoutExerciseRepository.delete(exercise);
     }
 
-    private WorkoutExerciseResponse toResponse(WorkoutExercise exercise) {
+    private WorkoutExerciseResponse toResponse(WorkoutExercise workoutExercise) {
         return new WorkoutExerciseResponse(
-                exercise.getId(),
-                exercise.getExerciseName(),
-                exercise.getSets(),
-                exercise.getReps(),
-                exercise.getWeight(),
-                exercise.getCreatedAt()
+                workoutExercise.getId(),
+                workoutExercise.getExercise().getId(),
+                workoutExercise.getExercise().getName(),
+                workoutExercise.getSets(),
+                workoutExercise.getReps(),
+                workoutExercise.getWeight(),
+                workoutExercise.getCreatedAt()
         );
     }
 }

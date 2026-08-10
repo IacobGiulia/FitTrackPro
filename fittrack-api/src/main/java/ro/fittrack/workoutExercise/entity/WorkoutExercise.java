@@ -2,6 +2,7 @@ package ro.fittrack.workoutExercise.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ro.fittrack.exercise.entity.Exercise;
 import ro.fittrack.workout.entity.Workout;
 
 import java.time.LocalDate;
@@ -25,8 +26,9 @@ public class WorkoutExercise {
     @JoinColumn(name="workout_id", nullable = false)
     private Workout workout;
 
-    @Column(name="exercise_name", nullable = false)
-    private String exerciseName;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "exercise_id", nullable = false)
+    private Exercise exercise;
 
     @Column(nullable = false)
     private Integer sets;
