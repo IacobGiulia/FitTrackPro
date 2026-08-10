@@ -36,19 +36,19 @@ public class WorkoutExerciseController {
     public WorkoutExerciseResponse getExercise(@PathVariable UUID workoutId, @PathVariable UUID exerciseId) {
         return workoutExerciseService.getExercise(workoutId, exerciseId);
     }
-
-    @PutMapping("/{exerciseId}")
-    public WorkoutExerciseResponse updateExercise(
-            @PathVariable UUID workoutId,
-            @PathVariable UUID exerciseId,
-            @RequestBody @Valid UpdateWorkoutExerciseRequest request
-    ) {
-        return workoutExerciseService.updateExercise(
-                workoutId,
-                exerciseId,
-                request
-        );
-    }
+//
+//    @PutMapping("/{exerciseId}")
+//    public WorkoutExerciseResponse updateExercise(
+//            @PathVariable UUID workoutId,
+//            @PathVariable UUID exerciseId,
+//            @RequestBody @Valid UpdateWorkoutExerciseRequest request
+//    ) {
+//        return workoutExerciseService.updateExercise(
+//                workoutId,
+//                exerciseId,
+//                request
+//        );
+//    }
 
     @DeleteMapping("/{exerciseId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

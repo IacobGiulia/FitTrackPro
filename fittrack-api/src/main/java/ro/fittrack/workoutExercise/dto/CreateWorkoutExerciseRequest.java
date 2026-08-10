@@ -8,18 +8,6 @@ import java.util.UUID;
 public record CreateWorkoutExerciseRequest(
 
         @NotNull(message = "Exercise ID is required")
-        UUID exerciseId,
-
-        @NotNull(message = "Sets are required")
-        @Positive(message = "Sets must be greater than 0")
-        Integer sets,
-
-        @NotNull(message = "Reps are required")
-        @Positive(message = "Reps must be greater than 0")
-        Integer reps,
-
-        @NotNull(message = "Weight is required")
-        @Positive(message = "Weight must be greater than 0")
-        Double weight
+        UUID exerciseId
 ) {
 }

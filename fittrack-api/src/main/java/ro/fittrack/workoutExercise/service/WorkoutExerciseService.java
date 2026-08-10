@@ -33,9 +33,6 @@ public class WorkoutExerciseService {
         WorkoutExercise workoutExercise = WorkoutExercise.builder()
                 .workout(workout)
                 .exercise(exercise)
-                .sets(request.sets())
-                .reps(request.reps())
-                .weight(request.weight())
                 .build();
 
         WorkoutExercise savedExercise = workoutExerciseRepository.save(workoutExercise);
@@ -73,10 +70,6 @@ public class WorkoutExerciseService {
                         .orElseThrow(() ->
                                 new IllegalArgumentException("Exercise not found"));
 
-        workoutExercise.setSets(request.sets());
-        workoutExercise.setReps(request.reps());
-        workoutExercise.setWeight(request.weight());
-
         WorkoutExercise updated =
                 workoutExerciseRepository.save(workoutExercise);
 
@@ -99,9 +92,6 @@ public class WorkoutExerciseService {
                 workoutExercise.getId(),
                 workoutExercise.getExercise().getId(),
                 workoutExercise.getExercise().getName(),
-                workoutExercise.getSets(),
-                workoutExercise.getReps(),
-                workoutExercise.getWeight(),
                 workoutExercise.getCreatedAt()
         );
     }

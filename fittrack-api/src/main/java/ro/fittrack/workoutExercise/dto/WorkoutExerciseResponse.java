@@ -7,9 +7,6 @@ public record WorkoutExerciseResponse(
         UUID id,
         UUID exerciseId,
         String exerciseName,
-        Integer sets,
-        Integer reps,
-        Double weight,
         LocalDateTime createdAt
 ) {
 }
