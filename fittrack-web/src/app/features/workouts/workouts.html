@@ -1,0 +1,49 @@
+<div class="workouts-page">
+
+  <div class="page-header">
+    <div>
+      <h1>My Workouts</h1>
+      <p>Track your training sessions and progress.</p>
+    </div>
+
+    <button class="create-button">
+      + New Workout
+    </button>
+  </div>
+
+  <div class="workouts-grid">
+
+    @for (workout of workouts(); track workout.id){
+      <div class="workout-card">
+      <div class="workout-card-header">
+        <h2>{{workout.name}}</h2>
+        <span>Workout</span>
+      </div>
+
+      <p class="workout-description">
+        {{workout.description || 'No description available!'}}
+      </p>
+
+      <p class="workout-date">
+        {{workout.created_at | date:'dd MMM yyyy'}}
+      </p>
+
+      <div class="workout-info">
+        <span>💪 Workout</span>
+        <span>📅 {{ workout.created_at | date:'dd MMM' }}</span>
+      </div>
+
+      <button
+        class="view-button"
+        [routerLink]="['/workouts', workout.id]">
+        View Workout
+      </button>
+    </div>
+    }
+  
+
+  
+
+  </div>
+
+</div>

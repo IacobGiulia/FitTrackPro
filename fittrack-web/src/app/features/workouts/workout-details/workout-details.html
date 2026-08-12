@@ -1,0 +1,79 @@
+<div class="workout-details-page">
+
+  <a routerLink="/workouts" class="back-button">
+    ← Back to Workouts
+  </a>
+
+  @if (workout()) {
+
+    <div class="page-header">
+
+      <div>
+        <h1>{{ workout().name }}</h1>
+
+        <p>
+          Started:
+          {{ workout().started_at | date:'dd MMM yyyy, HH:mm' }}
+        </p>
+      </div>
+
+      <span class="status">
+        {{ workout().finished_at ? 'Finished' : 'In Progress' }}
+      </span>
+
+    </div>
+
+    <section class="exercises-section">
+
+      <div class="section-header">
+        <h2>Exercises</h2>
+
+        <button class="add-button">
+          + Add Exercise
+        </button>
+      </div>
+
+      @if (exercises().length > 0) {
+
+        <div class="exercises-list">
+
+          @for (exercise of exercises(); track exercise.id) {
+
+            <div class="exercise-card">
+
+              <div>
+                <h3>{{ exercise.exerciseName }}</h3>
+
+                <p>
+                  Added:
+                  {{ exercise.createdAt | date:'dd MMM yyyy' }}
+                </p>
+              </div>
+
+              <button class="delete-button">
+                Delete
+              </button>
+
+            </div>
+
+          }
+
+        </div>
+
+      } @else {
+
+        <div class="empty-state">
+          <p>No exercises in this workout yet.</p>
+        </div>
+
+      }
+
+    </section>
+
+  } @else {
+
+    <p>Loading workout...</p>
+
+  }
+
+</div>
