@@ -1,24 +1,53 @@
-<div class="login-container">
-  <h1>FitTrack</h1>
+<div class="login-page">
 
-  <form (ngSubmit)="login()">
-    <input
-      type="email"
-      name="email"
-      [(ngModel)]="email"
-      placeholder="Email"
-      required
-      />
-    <input
-      type="password"
-      name="password"
-      [(ngModel)]="password"
-      placeholder="password"
-      required=""
-      />
-    <button type="submit">
-      Login
-    </button>
+  <div class="login-card">
 
-  </form>
+    <h1>Log In</h1>
+    <p>Welcome back to FitTrack Pro.</p>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      <div class="form-field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="you@example.com" />
+
+        @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+          <span class="field-error">Introdu un email valid.</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="••••••••" />
+
+        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+          <span class="field-error">Parola este obligatorie.</span>
+        }
+      </div>
+
+      @if (errorMessage()) {
+        <div class="form-error">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <button
+        type="submit"
+        class="submit-button"
+        [disabled]="loading()">
+        {{ loading() ? 'Se conectează...' : 'Log In' }}
+      </button>
+
+    </form>
+
+  </div>
+
 </div>

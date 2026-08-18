@@ -1,11 +1,16 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { forkJoin, of, switchMap, map} from 'rxjs';
 import { WorkoutService } from '../../../core/services/workout';
+import { WorkoutExercise } from '../../../core/services/workout-exercise';
+import { WorkoutSet, WorkoutSetService } from '../../../core/services/workout-set';
+import { FormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-workout-details',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RouterLink, FormsModule],
   templateUrl: './workout-details.html',
   styleUrl: './workout-details.scss'
 })
@@ -15,11 +20,15 @@ export class WorkoutDetails implements OnInit {
   private workoutService: WorkoutService;
 
   workout = signal<any>(null);
-  exercises = signal<any[]>([]);
+  exercises = signal<WorkoutExercise[]>([]);
+
+  addingSetExerciseId = signal<string | null>(null);
+  newSet = { setNumber: 1, reps: 0, weight: 0};
 
   constructor(
     route: ActivatedRoute,
-    workoutService: WorkoutService
+    workoutService: WorkoutService,
+    private workoutSetService: WorkoutSetService
   ) {
     this.route = route;
     this.workoutService = workoutService;
@@ -46,14 +55,83 @@ export class WorkoutDetails implements OnInit {
       }
     });
 
-    this.workoutService.getWorkoutExercises(workoutId).subscribe({
-      next: (exercises) => {
-        console.log('EXERCISES:', exercises);
-        this.exercises.set(exercises);
+    this.workoutService.getWorkoutExercises(workoutId).pipe(
+      switchMap((exercises) => {
+        if (exercises.length === 0) {
+          return of([]);
+        }
+ 
+        const exercisesWithSets$ = exercises.map((exercise) =>
+          this.workoutSetService.getSets(exercise.id).pipe(
+            map((sets) => ({ ...exercise, sets }))
+          )
+        );
+ 
+        return forkJoin(exercisesWithSets$);
+      })
+    ).subscribe({
+      next: (exercisesWithSets) => {
+        console.log('EXERCISES WITH SETS:', exercisesWithSets);
+        this.exercises.set(exercisesWithSets);
       },
       error: (error) => {
         console.error('EROARE EXERCISES:', error);
       }
     });
   }
+
+  toggleAddSet(exercise: WorkoutExercise): void{
+    if(this.addingSetExerciseId() === exercise.id){
+      this.addingSetExerciseId.set(null);
+      return;
+    }
+
+    this.newSet = {
+      setNumber: exercise.sets.length + 1,
+      reps: 0,
+      weight: 0
+    };
+    this.addingSetExerciseId.set(exercise.id);
+  }
+
+  cancelAddSet(): void{
+    this.addingSetExerciseId.set(null);
+  }
+
+  submitNewSet(exercise: WorkoutExercise): void{
+    const {setNumber, reps, weight} = this.newSet;
+
+    if(!setNumber || !reps || !weight)
+      return;
+
+    this.workoutSetService.addSet(exercise.id, setNumber, reps, weight).subscribe({
+      next: (createdSet) => {
+        this.exercises.update((current) => 
+          current.map((ex) =>
+          ex.id === exercise.id
+          ? {...ex, sets: [...ex.sets, createdSet]}
+          :ex
+        )
+      );
+      this.addingSetExerciseId.set(null);
+      },
+      error: (error) => console.error('EROARE ADD SET:', error)
+    });
+  }
+
+  deleteSet(exercise: WorkoutExercise, set: WorkoutSet): void {
+    this.workoutSetService.deleteSet(exercise.id, set.id).subscribe({
+      next: () => {
+        this.exercises.update((current) =>
+          current.map((ex) =>
+            ex.id === exercise.id
+              ? { ...ex, sets: ex.sets.filter((s) => s.id !== set.id) }
+              : ex
+          )
+        );
+      },
+      error: (error) => console.error('EROARE DELETE SET:', error)
+    });
+  }
+
 }

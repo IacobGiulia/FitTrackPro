@@ -32,23 +32,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
+        System.out.println("=== JWT FILTER ===");
+        System.out.println("URI: " + request.getRequestURI());
+        System.out.println("AUTH HEADER: " + authHeader);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("NICIUN HEADER BEARER -> trece neautentificat");
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = authHeader.substring(7);
 
-        if (!jwtService.isTokenValid(token)) {
+        boolean valid = jwtService.isTokenValid(token);
+        System.out.println("TOKEN VALID: " + valid);
+
+        if (!valid) {
+            System.out.println("TOKEN INVALID -> trece neautentificat");
             filterChain.doFilter(request, response);
             return;
         }
 
         String email = jwtService.extractEmail(token);
+        System.out.println("EMAIL DIN TOKEN: " + email);
 
         User user = userRepository.findByEmail(email)
                 .orElse(null);
+
+        System.out.println("USER GASIT IN DB: " + (user != null));
 
         if (user != null
                 && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -67,6 +78,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext()
                     .setAuthentication(authentication);
+
+            System.out.println("AUTHENTICATION SETATA CU SUCCES");
+        } else {
+            System.out.println("AUTHENTICATION NU A FOST SETATA (user null sau deja exista una)");
         }
 
         filterChain.doFilter(request, response);
