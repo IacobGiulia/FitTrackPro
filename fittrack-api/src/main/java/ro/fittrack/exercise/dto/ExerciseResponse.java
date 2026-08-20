@@ -6,6 +6,7 @@ public record ExerciseResponse(
         UUID id,
         String name,
         String muscleGroup,
-        String description
+        String description,
+        String imageUrl
 ) {
 }

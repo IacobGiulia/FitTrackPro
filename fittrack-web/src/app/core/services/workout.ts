@@ -31,6 +31,10 @@ export class WorkoutService {
   return this.http.get<Workout>(`${this.apiUrl}/${id}`);
 }
 
+  createWorkout(name: string): Observable<Workout>{
+    return this.http.post<Workout>(this.apiUrl, {name});
+  }
+
   getWorkoutExercises(id: string): Observable<WorkoutExercise[]> {
   return this.http.get<WorkoutExercise[]>(
     `${this.apiUrl}/${id}/exercises`
@@ -38,6 +42,10 @@ export class WorkoutService {
 }
 
   addExerciseToWorkout(workoutId: string, exerciseId: string): Observable<WorkoutExercise>{
+    return this.http.post<WorkoutExercise>(`${this.apiUrl}/${workoutId}/exercises`, {exerciseId});
+  }
+
+  addExercise(workoutId: string, exerciseId: string): Observable<WorkoutExercise>{
     return this.http.post<WorkoutExercise>(`${this.apiUrl}/${workoutId}/exercises`, {exerciseId});
   }
 

@@ -1,0 +1,103 @@
+<div class="exercises-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Exercise Library</h1>
+      <p>Browse exercises and tap a card to see details.</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+
+    <p class="loading-text">Loading exercises...</p>
+
+  } @else if (exercises().length === 0) {
+
+    <div class="empty-state">
+      <p>No exercises available yet.</p>
+    </div>
+
+  } @else {
+
+    <div class="exercises-grid">
+
+      @for (exercise of exercises(); track exercise.id) {
+
+        <button
+          class="exercise-card"
+          (click)="openExercise(exercise)">
+
+          @if (exercise.imageUrl) {
+
+            <div class="exercise-image">
+              <img class="image-backdrop" [src]="exercise.imageUrl" alt="" aria-hidden="true" />
+              <img class="image-foreground" [src]="exercise.imageUrl" [alt]="exercise.name" />
+            </div>
+
+          } @else {
+
+            <div
+              class="exercise-image"
+              [style.background]="getStyle(exercise.muscleGroup).gradient">
+              <span class="exercise-emoji">{{ getStyle(exercise.muscleGroup).emoji }}</span>
+            </div>
+
+          }
+
+          <div class="exercise-info">
+            <h3>{{ exercise.name }}</h3>
+            <span class="muscle-badge">{{ exercise.muscleGroup }}</span>
+          </div>
+
+        </button>
+
+      }
+
+    </div>
+
+  }
+
+  @if (selectedExercise(); as exercise) {
+
+    <div class="modal-backdrop" (click)="closeExercise()">
+
+      <div class="modal-card" (click)="$event.stopPropagation()">
+
+        @if (exercise.imageUrl) {
+
+          <div class="modal-image">
+            <img class="image-backdrop" [src]="exercise.imageUrl" alt="" aria-hidden="true" />
+            <img class="image-foreground" [src]="exercise.imageUrl" [alt]="exercise.name" />
+          </div>
+
+        } @else {
+
+          <div
+            class="modal-image"
+            [style.background]="getStyle(exercise.muscleGroup).gradient">
+            <span class="modal-emoji">{{ getStyle(exercise.muscleGroup).emoji }}</span>
+          </div>
+
+        }
+
+        <div class="modal-content">
+
+          <button class="close-button" (click)="closeExercise()">✕</button>
+
+          <span class="muscle-badge">{{ exercise.muscleGroup }}</span>
+
+          <h2>{{ exercise.name }}</h2>
+
+          <p class="modal-description">
+            {{ exercise.description || 'No description available for this exercise yet.' }}
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

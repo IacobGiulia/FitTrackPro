@@ -6,10 +6,38 @@
       <p>Track your training sessions and progress.</p>
     </div>
 
-    <button class="create-button">
-      + New Workout
-    </button>
+    <div class="header-actions">
+      <button class="library-button" [routerLink]="['/exercises']">
+        Exercise Library
+      </button>
+
+      <button class="create-button" (click)="toggleAddWorkout()">
+        {{ addingWorkout() ? 'Cancel' : '+ New Workout' }}
+      </button>
+
+      <button class="logout-button" (click)="logout()">
+        Logout
+      </button>
+    </div>
   </div>
+
+  @if (addingWorkout()) {
+
+    <div class="add-workout-form">
+
+      <input
+        type="text"
+        placeholder="Workout name (e.g. Push Day)"
+        [(ngModel)]="newWorkoutName"
+        (keyup.enter)="submitNewWorkout()" />
+
+      <button class="save-workout-button" (click)="submitNewWorkout()">
+        Save
+      </button>
+
+    </div>
+
+  }
 
   <div class="workouts-grid">
 

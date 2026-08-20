@@ -22,6 +22,7 @@ public class ExerciseService {
                 .name(request.name())
                 .muscleGroup(request.muscleGroup())
                 .description(request.description())
+                .imageUrl(request.imageUrl())
                 .build();
 
         Exercise savedExercise = exerciseRepository.save(exercise);
@@ -57,6 +58,7 @@ public class ExerciseService {
         exercise.setName(request.name());
         exercise.setMuscleGroup(request.muscleGroup());
         exercise.setDescription(request.description());
+        exercise.setImageUrl(request.imageUrl());
 
         Exercise updatedExercise = exerciseRepository.save(exercise);
 
@@ -78,7 +80,8 @@ public class ExerciseService {
                 exercise.getId(),
                 exercise.getName(),
                 exercise.getMuscleGroup(),
-                exercise.getDescription()
+                exercise.getDescription(),
+                exercise.getImageUrl()
         );
     }
 }

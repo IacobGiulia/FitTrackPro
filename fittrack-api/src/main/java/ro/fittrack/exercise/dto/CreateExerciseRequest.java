@@ -10,5 +10,7 @@ public record CreateExerciseRequest(
         @NotBlank(message="Muscle group is required")
         String muscleGroup,
 
-        String description
+        String description,
+
+        String imageUrl
 ){}
